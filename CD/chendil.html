@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chendilnadan | Founder & AI Engineer – VYNOR</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+:root {
+  --black: #0a0a0a;
+  --white: #ffffff;
+  --gray-100: #f7f7f7;
+  --gray-200: #eeeeee;
+  --gray-300: #dddddd;
+  --gray-500: #888888;
+  --gray-700: #444444;
+  --accent: #111111;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #ffffff;
+  color: #0a0a0a;
+  overflow-x: hidden;
+}
+
+#bgCanvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: -2;
+  pointer-events: none;
+}
+
+.cursor {
+  position: fixed;
+  width: 240px; height: 240px;
+  background: radial-gradient(circle, rgba(0,0,0,0.06), transparent 70%);
+  pointer-events: none;
+  transform: translate(-50%,-50%);
+  z-index: 0;
+  transition: width 0.3s, height 0.3s;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; width: 100%;
+  display: flex; justify-content: center;
+  padding: 10px 60px;
+  background: rgba(255,255,255,0.90);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  z-index: 1000;
+  align-items: center;
+}
+
+.nav-links a {
+  color: #555;
+  margin: 0 11px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: #000; }
+
+/* ── HERO ── */
+.hero {
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Left column — push content below the fixed navbar */
+.hero-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 60px 0 80px;
+  z-index: 1;
+}
+
+.hero-left .hero-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: #aaa;
+  text-transform: uppercase;
+  margin-bottom: 22px;
+}
+
+/* Single-line name — scales with viewport on desktop */
+.hero-left h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(32px, 4vw, 62px);
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.0;
+  letter-spacing: -2px;
+  white-space: nowrap;
+}
+
+.hero-left .hero-sub {
+  color: #666;
+  margin-top: 22px;
+  font-size: 16px;
+  max-width: 440px;
+  line-height: 1.85;
+  font-weight: 400;
+}
+
+.hero-left .hero-role {
+  margin-top: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111;
+  letter-spacing: 0.3px;
+}
+
+.hero-left .hero-role span {
+  width: 32px;
+  height: 1.5px;
+  background: #000;
+  display: inline-block;
+}
+
+/* Right column — offset top by nav height so photo starts below nav */
+.hero-right {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  padding-top: 60px;
+}
+
+.hero-right img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+.hero-right::before {
+  content: '';
+  position: absolute;
+  top: 70px; left: 0;
+  width: 0px; height: 80px;
+  background: linear-gradient(to right, #ffffff, transparent);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ── INTRO SECTION ── */
+.intro-section {
+  padding: 120px 40px;
+  text-align: center;
+  background: #fff;
+  position: relative;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+.intro-section.visible { opacity: 1; transform: translateY(0); }
+
+.intro-section .tag {
+  display: inline-block;
+  margin-bottom: 24px;
+  padding: 7px 20px;
+  border-radius: 30px;
+  border: 1.5px solid rgba(0,0,0,0.2);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #333;
+  text-transform: uppercase;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(8px);
+}
+
+.intro-section h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 68px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.05;
+  max-width: 880px;
+  margin: 0 auto;
+  letter-spacing: -1.5px;
+}
+
+.intro-section .intro-sub {
+  color: #666;
+  margin-top: 22px;
+  font-size: 17px;
+  max-width: 580px;
+  line-height: 1.8;
+  font-weight: 400;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── SECTIONS ── */
+.section {
+  padding: 120px 40px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+  position: relative;
+}
+.section.visible { opacity: 1; transform: translateY(0); }
+
+.section h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 38px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+
+.section .section-sub {
+  color: #777;
+  font-size: 16px;
+  margin-bottom: 40px;
+  max-width: 580px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.7;
+}
+
+/* ── CARDS ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 28px;
+  margin-top: 40px;
+}
+
+.card {
+  background: #f8f8f8;
+  border: 1px solid #e8e8e8;
+  border-radius: 20px;
+  padding: 24px;
+  transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+.card:hover {
+  transform: translateY(-10px) scale(1.02);
+  border-color: #000;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+}
+
+.card img {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+/* ── MODAL ── */
+.modal {
+  position: fixed; top:0; left:0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.92);
+  display: none;
+  justify-content: center; align-items: center;
+  z-index: 9999;
+}
+.modal img { width: 60%; border-radius: 20px; }
+
+/* ── PARALLAX ── */
+.parallax {
+  height: 60vh;
+  background:
+    linear-gradient(rgba(255,255,255,0.75), rgba(255,255,255,0.9)),
+    url('https://images.unsplash.com/photo-1518770660439-4636190af475') center/cover fixed;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 44px; font-weight: 800;
+  color: #ffffff;
+  text-align: center;
+  padding: 0 40px;
+  letter-spacing: -0.5px;
+}
+.parallax p {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px; font-weight: 400;
+  color: #666;
+  margin-top: 16px;
+  max-width: 580px;
+  line-height: 1.7;
+}
+
+/* ── STATS ── */
+.stat {
+  font-family: 'Syne', sans-serif;
+  font-size: 48px;
+  font-weight: 800;
+  color: #000;
+}
+
+/* ── FOOTER ── */
+footer {
+  text-align: center;
+  padding: 36px;
+  color: #888;
+  font-size: 13px;
+  border-top: 1px solid #eee;
+}
+
+/* ── ABOUT ── */
+.about-inner {
+  display: flex; flex-wrap: wrap; gap: 40px;
+  justify-content: center; align-items: flex-start;
+  max-width: 1000px; margin: 0 auto; text-align: left;
+}
+.about-text p {
+  color: #555;
+  line-height: 1.9;
+  font-size: 15px;
+  max-width: 560px;
+}
+.about-text p+p { margin-top: 14px; }
+
+.about-badges { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.badge {
+  padding: 6px 16px;
+  border-radius: 20px;
+  background: #000; color: #fff;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+/* ── COMPANY BLOCK ── */
+.company-block {
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 24px;
+  padding: 50px 44px;
+  max-width: 820px;
+  margin: 40px auto 0;
+  text-align: left;
+}
+.company-block h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px; font-weight: 800;
+  margin-bottom: 16px;
+}
+.company-block p { color: #666; line-height: 1.9; font-size: 15px; }
+.company-block p+p { margin-top: 12px; }
+
+/* ── PROJECT TAGS ── */
+.project-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  background: #000; color: #fff;
+}
+.project-tag.healthcare { background: #0f6b3c; }
+.project-tag.surveillance { background: #0f3a6b; }
+.project-tag.monitoring { background: #6b0f0f; }
+
+.card h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 19px; font-weight: 700;
+  margin-bottom: 8px;
+}
+.card p { color: #666; font-size: 14px; line-height: 1.65; }
+.card .card-link {
+  display: inline-block; margin-top: 14px;
+  font-size: 13px; font-weight: 600; color: #000;
+  border-bottom: 2px solid #000;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.card .card-link:hover { opacity: 0.6; }
+
+/* ── SKILLS ── */
+.skills-grid {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  justify-content: center; margin-top: 40px;
+  max-width: 820px;
+  margin-left: auto; margin-right: auto;
+}
+.skill-pill {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 22px;
+  border-radius: 30px;
+  background: #f5f5f5;
+  border: 1.5px solid #e0e0e0;
+  font-size: 14px; font-weight: 500;
+  transition: 0.25s; cursor: default;
+  line-height: 1;
+}
+.skill-pill:hover {
+  background: #000; color: #fff;
+  border-color: #000;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* ── IMPACT ── */
+.impact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+  gap: 22px; margin-top: 40px;
+  max-width: 920px;
+  margin-left: auto; margin-right: auto;
+}
+.impact-item {
+  background: #f8f8f8;
+  border: 1px solid #e8e8e8;
+  border-radius: 20px;
+  padding: 32px 22px;
+  text-align: center;
+  transition: 0.4s;
+}
+.impact-item:hover { border-color: #000; transform: translateY(-8px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); }
+.impact-icon { margin-bottom: 14px; display: flex; justify-content: center; align-items: center; }
+.impact-icon svg { transition: transform 0.3s, opacity 0.3s; opacity: 0.75; }
+.impact-item:hover .impact-icon svg { transform: scale(1.12); opacity: 1; }
+.impact-item p { font-size: 14px; color: #555; line-height: 1.65; font-weight: 500; }
+
+/* ── VISION PARALLAX ── */
+.vision-para {
+  height: 55vh;
+  background:
+    linear-gradient(rgba(255,255,255,0.78), rgba(255,255,255,0.94)),
+    url('https://images.unsplash.com/photo-1555949963-ff9fe0c870eb') center/cover fixed;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  text-align: center; padding: 0 40px;
+}
+.vision-para h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 40px; font-weight: 800; color: #ffffff;
+  letter-spacing: -0.5px;
+}
+.vision-para p { font-size: 16px; color: #666; margin-top: 16px; max-width: 640px; line-height: 1.85; }
+
+/* ── ACHIEVEMENTS ── */
+.ach-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+  gap: 22px; margin-top: 40px;
+  max-width: 920px;
+  margin-left: auto; margin-right: auto;
+}
+.ach-card {
+  background: #f8f8f8;
+  border: 1px solid #e8e8e8;
+  border-radius: 20px;
+  padding: 32px 22px;
+  text-align: center;
+  transition: 0.4s;
+}
+.ach-card:hover { border-color: #000; transform: translateY(-8px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); }
+.ach-icon { margin-bottom: 16px; display: flex; justify-content: center; align-items: center; }
+.ach-icon svg { opacity: 0.75; transition: transform 0.3s, opacity 0.3s; }
+.ach-card:hover .ach-icon svg { transform: scale(1.12); opacity: 1; }
+.ach-card h4 {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px; font-weight: 700; color: #000;
+  margin-bottom: 8px;
+}
+.ach-card p { font-size: 13px; color: #777; line-height: 1.65; }
+
+/* ── CONTACT ── */
+.contact-card { text-align: center; cursor: pointer; transition: 0.4s; }
+.contact-card .icon { margin-bottom: 14px; transition: 0.4s; display: flex; justify-content: center; align-items: center; }
+.contact-card .icon svg { opacity: 0.72; transition: transform 0.3s, opacity 0.3s; }
+.contact-card:hover { transform: translateY(-12px) scale(1.04); box-shadow: 0 12px 36px rgba(0,0,0,0.14); }
+.contact-card:hover .icon { transform: scale(1.18) rotate(5deg); }
+.contact-card:hover .icon svg { opacity: 1; }
+.contact-link { color: #000; text-decoration: none; font-weight: 500; }
+.contact-link:hover { color: #555; text-decoration: underline; }
+.contact-card h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+
+/* ── TEXT VISIBILITY ON DARK CANVAS BACKGROUND ── */
+
+/* Hero — sits on transparent bg, dark canvas shows through */
+.hero-left h1              { color: #ffffff; }
+.hero-left .hero-label     { color: #aaaaaa; }
+.hero-left .hero-sub       { color: rgba(255,255,255,0.72); }
+.hero-left .hero-role      { color: #ffffff; }
+.hero-left .hero-role span { background: #ffffff; }
+
+/* Section headings & sub-headings — sections have no bg, canvas shows through */
+.section h2           { color: #ffffff; }
+.section .section-sub { color: rgba(255,255,255,0.60); }
+
+/* About body text — sits directly in section, no card wrapper */
+.about-text p { color: rgba(255,255,255,0.70); }
+
+/* Stats numbers */
+.stat { color: #000; }
+
+/* Footer */
+footer { color: #aaaaaa; border-top-color: rgba(255,255,255,0.10); }
+
+/* ── BTN ── */
+.btn {
+  margin-top: 30px;
+  padding: 15px 38px;
+  border-radius: 30px;
+  border: none;
+  background: #000;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+.btn:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+
+/* ── STATS GRID ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 40px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 36px 20px;
+  text-align: center;
+}
+.stat-icon { font-size: 28px; margin-bottom: 12px; line-height: 1; }
+.stat-card p { margin-top: 6px; font-size: 13px; font-weight: 600; color: #777; letter-spacing: 0.3px; text-transform: uppercase; }
+
+/* ── HAMBURGER NAV ── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 6px;
+  border: none;
+  background: none;
+  z-index: 1100;
+}
+.hamburger span { display: block; width: 24px; height: 2px; background: #000; border-radius: 2px; transition: all 0.3s ease; }
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  nav { padding: 14px 20px; justify-content: space-between; align-items: center; flex-wrap: nowrap; position: fixed; }
+  .hamburger { display: flex; }
+  .nav-links {
+    display: none; flex-direction: column;
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100vh;
+    background: rgba(255,255,255,0.98);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    justify-content: center; align-items: center;
+    gap: 0; z-index: 1050;
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a {
+    margin: 0; padding: 18px 0;
+    font-size: 22px; font-family: 'Syne', sans-serif;
+    font-weight: 700; letter-spacing: 1px; color: #000;
+    width: 100%; text-align: center;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s, color 0.2s;
+  }
+  .nav-links a:hover { background: #f5f5f5; }
+
+  /* Stacked hero on mobile */
+  .hero { flex-direction: column; height: auto; min-height: 100svh; }
+  /* Photo comes first, shifted down by nav height */
+  .hero-right { height: 62vw; min-height: 220px; order: -1; padding-top: 56px; }
+  .hero-right::before { display: none; }
+  .hero-left { padding: 28px 24px 48px; order: 1; }
+
+  /* Single-line name on mobile using clamp */
+  .hero-left h1 {
+    font-size: clamp(22px, 7.5vw, 40px);
+    white-space: nowrap;
+    letter-spacing: -0.5px;
+  }
+
+  .hero-left .hero-sub { font-size: 15px; margin-top: 16px; }
+  .hero-left .hero-label { font-size: 10px; margin-bottom: 16px; }
+  .hero-left .hero-role { font-size: 12px; margin-top: 20px; }
+
+  .intro-section { padding: 72px 24px 60px; }
+  .intro-section h2 { font-size: 30px; letter-spacing: -0.5px; }
+  .intro-section .intro-sub { font-size: 15px; }
+
+  .section { padding: 64px 20px; }
+  .section h2 { font-size: 26px; }
+  .section .section-sub { font-size: 14px; }
+
+  .grid { grid-template-columns: 1fr; gap: 16px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 28px; }
+  .stat-card { padding: 28px 14px; }
+  .stat { font-size: 36px; }
+  .stat-icon { font-size: 22px; }
+
+  .impact-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+  .impact-item { padding: 22px 14px; }
+
+  .ach-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+  .ach-card { padding: 24px 14px; }
+
+  .parallax, .vision-para { background-attachment: scroll; height: auto; padding: 60px 24px; }
+  .parallax { font-size: 26px; }
+  .vision-para h2 { font-size: 26px; }
+  .vision-para p { font-size: 14px; }
+
+  .about-inner { flex-direction: column; text-align: left; gap: 20px; }
+  .about-text p { font-size: 14px; max-width: 100%; }
+  .about-badges { gap: 8px; }
+
+  .company-block { padding: 28px 18px; margin-top: 24px; }
+  .company-block h3 { font-size: 18px; }
+
+  .skills-grid { gap: 8px; margin-top: 28px; }
+  .skill-pill { font-size: 13px; padding: 9px 16px; }
+
+  .contact-grid { grid-template-columns: 1fr 1fr !important; gap: 14px; }
+  .contact-card h3 { font-size: 13px; }
+  .contact-card p { font-size: 13px; }
+
+  footer { font-size: 12px; padding: 20px 16px; }
+  .modal img { width: 92%; }
+}
+
+@media (max-width: 480px) {
+  .hero-right { height: 75vw; padding-top: 56px; }
+  .hero-left h1 { font-size: clamp(18px, 6.5vw, 34px); white-space: nowrap; }
+  .intro-section h2 { font-size: 26px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .impact-grid { grid-template-columns: 1fr 1fr; }
+  .ach-grid { grid-template-columns: 1fr; }
+  .contact-grid { grid-template-columns: 1fr 1fr !important; }
+  .parallax { font-size: 22px; }
+}
+
+@media (max-width: 360px) {
+  .hero-left h1 { font-size: clamp(15px, 5.5vw, 28px); white-space: nowrap; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .contact-grid { grid-template-columns: 1fr !important; }
+  .ach-grid { grid-template-columns: 1fr; }
+}
+
+/* ── SMART TEXT COLOR SYSTEM ── */
+
+/* DEFAULT (dark background / canvas visible) */
+body {
+  color: #ffffff;
+}
+
+/* HERO (dark background) */
+.hero-left h1,
+.hero-left .hero-role {
+  color: #ffffff;
+}
+.hero-left .hero-sub {
+  color: rgba(255,255,255,0.72);
+}
+.hero-left .hero-label {
+  color: #aaaaaa;
+}
+.hero-left .hero-role span {
+  background: #ffffff;
+}
+
+/* LIGHT BACKGROUND SECTIONS */
+.intro-section h2,
+.vision-para h2,
+.parallax,
+.company-block h3,
+.section,
+.company-block,
+.card,
+.impact-item,
+.ach-card,
+.stat-card,
+.contact-card,
+.parallax,
+.vision-para {
+  color: #000000 !important;
+}
+
+/* HEADINGS inside light sections 
+.intro-section h2,*/
+.section h2,
+.card h3,
+.ach-card h4
+ {
+  color: #ffffff !important;
+}
+
+/* SUB TEXT */
+.section .section-sub,
+.intro-section .intro-sub,
+.parallax p,
+.vision-para p,
+.card p,
+.ach-card p,
+.about-text p {
+  color: #c2c2c2 !important;
+}
+
+/* LINKS */
+.card .card-link,
+.contact-link {
+  color: #000 !important;
+}
+
+/* BADGES */
+.badge {
+  background: #000;
+  color: #fff;
+}
+
+/* STATS */
+.stat {
+  color: #000 !important;
+}
+
+/* FOOTER */
+footer {
+  color: #888;
+}
+.header{
+  text-decoration: color(white);
+}
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+<div class="cursor" id="cursor"></div>
+
+<!-- ══ NAV — Patent link removed ══ -->
+<nav>
+  <button class="hamburger" id="hamburger" aria-label="Open menu" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="navLinks">
+    <a href="#about" onclick="closeNav()">About</a>
+    <a href="#company" onclick="closeNav()">VYNOR</a>
+    <a href="#projects" onclick="closeNav()">Projects</a>
+    <a href="#skills" onclick="closeNav()">Skills</a>
+    <a href="#impact" onclick="closeNav()">Impact</a>
+    <a href="#achievements" onclick="closeNav()">Achievements</a>
+    <a href="#contact" onclick="closeNav()">Contact</a>
+  </div>
+</nav>
+
+<!-- ════ HERO ════ -->
+<section class="hero">
+  <div class="hero-left">
+    <span class="hero-label">Chennai, Tamil Nadu · India</span>
+    <h1>P. N. Chendilnadan</h1>
+    <p class="hero-sub">Founder &amp; Director of VYNOR PRIVATE LIMITED — an AI-driven technology startup building intelligent systems across healthcare and safety domains. Patent holder, product builder, and problem solver.</p>
+    <div class="hero-role">
+      <span></span>
+      Founder &amp; AI Engineer · VYNOR
+    </div>
+  </div>
+  <div class="hero-right">
+    <img src="CD.jpeg" alt="P. N. Chendilnadan">
+  </div>
+</section>
+
+<!-- ════ INTRO ════ -->
+<section class="intro-section">
+  <span class="tag">Founder &amp; Director · VYNOR Private Limited</span>
+  <h2>Building the Future of<br>Intelligent Systems</h2>
+  <p class="intro-sub">From real-world problems to real-world solutions — designing AI-powered systems that improve emergency response, enhance safety, and enable real-time decision-making.</p>
+  <button class="btn" onclick="scrollToSection('projects')">Explore Work</button>
+</section>
+
+<!-- ════ ABOUT ════ -->
+<section id="about" class="section">
+  <h2>About</h2>
+  <p class="section-sub">Driven by Purpose. Built for Impact.</p>
+  <div class="about-inner">
+    <div class="about-text">
+      <p>I'm <strong>P. N. Chendilnadan</strong> — Founder &amp; Director of VYNOR PRIVATE LIMITED, an AI-driven technology startup building intelligent systems across healthcare and safety domains.</p>
+      <p>My work is driven by a single purpose: to solve real-world problems through technology that creates meaningful impact. I focus on developing intelligent, scalable systems that improve emergency response, enhance safety, and enable real-time decision-making.</p>
+      <p>Every solution I build is rooted in practicality, reliability, and long-term impact. My approach combines innovation with responsibility — ensuring technology not only advances but also serves people when it matters most.</p>
+      <p>From embedded systems and IoT to full-scale mobile applications and AI-powered platforms, I operate at the intersection of engineering depth and product thinking.</p>
+      <div class="about-badges">
+        <span class="badge">AI Systems</span>
+        <span class="badge">Healthcare Tech</span>
+        <span class="badge">Emergency Response</span>
+        <span class="badge">IoT &amp; ESP32</span>
+        <span class="badge">Mobile Development</span>
+        <span class="badge">Startup Founder</span>
+        <span class="badge">Patent Holder</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ PARALLAX 1 ════ -->
+<div class="parallax">
+  Engineering Innovation
+  <p>Combining system design, embedded technology, and application development to build solutions that are scalable, efficient, and deployment-ready.</p>
+</div>
+
+<!-- ════ COMPANY ════ -->
+<section id="company" class="section">
+  <h2>VYNOR PRIVATE LIMITED</h2>
+  <p class="section-sub">VYNOR — Where Innovation Becomes Reality</p>
+  <div class="company-block">
+    <h3>Who We Are</h3>
+    <p>VYNOR PRIVATE LIMITED is a technology startup focused on building AI-driven systems across healthcare and safety domains. The company operates as a parent organization leading multiple innovative projects, each targeting critical gaps in real-world systems.</p>
+    <p>With a strong foundation in system design, embedded technology, and application development, VYNOR builds solutions that are scalable, efficient, and deployment-ready. Our goal is to create a unified ecosystem where intelligent systems work together to improve lives.</p>
+    <p>VYNOR is the parent company behind three active product lines: <strong>AUSWAY</strong>, <strong>AUSCAM</strong>, and <strong>A.V. Monitoring</strong> — each targeting a critical gap in real-world emergency and safety infrastructure.</p>
+  </div>
+</section>
+
+<!-- ════ PROJECTS ════ -->
+<section id="projects" class="section">
+  <h2>Projects</h2>
+  <p class="section-sub">Transforming Ideas into Real-World Solutions</p>
+  <div class="grid">
+    <div class="card">
+      <img src="logo (2).png" onclick="openModal(this.src)" alt="AUSWAY">
+      <span class="project-tag healthcare"><i class="fas fa-truck-medical"></i> Healthcare</span>
+      <h3>AUSWAY</h3>
+      <p style="font-size:11px;font-weight:700;letter-spacing:1px;color:#aaa;margin-bottom:10px;text-transform:uppercase;">A Product of VYNOR Private Limited</p>
+      <p>An AI-powered healthcare emergency platform designed to improve ambulance accessibility, reduce response time, and enhance coordination between users, hospitals, and service providers. A super-app for healthcare emergency services.</p>
+    </div>
+    <div class="card">
+      <img src="logo (2).png" onclick="openModal(this.src)" alt="AUSCAM">
+      <span class="project-tag surveillance"><i class="fas fa-video"></i> Surveillance</span>
+      <h3>AUSCAM</h3>
+      <p style="font-size:11px;font-weight:700;letter-spacing:1px;color:#aaa;margin-bottom:10px;text-transform:uppercase;">A Product of VYNOR Private Limited</p>
+      <p>An intelligent ambulance surveillance and monitoring system using multi-camera input, edge processing, and event-triggered alerts to improve safety and accountability during emergency operations.</p>
+    </div>
+    <div class="card">
+      <img src="logo (2).png" onclick="openModal(this.src)" alt="A.V. Monitoring">
+      <span class="project-tag monitoring"><i class="fas fa-satellite-dish"></i> Monitoring</span>
+      <h3>A.V. Monitoring</h3>
+      <p style="font-size:11px;font-weight:700;letter-spacing:1px;color:#aaa;margin-bottom:10px;text-transform:uppercase;">A Product of VYNOR Private Limited</p>
+      <p>A real-time monitoring system focused on safety, surveillance, and intelligent tracking — designed to enhance situational awareness and prevent critical failures in dynamic environments.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════ MODAL ════ -->
+<div class="modal" id="modal" onclick="closeModal()">
+  <img id="modalImg" alt="Project Preview">
+</div>
+
+<!-- ════ LIVE STATS ════ -->
+<section class="section">
+  <h2>Live Stats</h2>
+  <p class="section-sub">Numbers that define our journey so far.</p>
+  <div class="stats-grid">
+    <div class="card stat-card">
+      <div class="stat-icon"></div>
+      <div class="stat" id="s1">0</div>
+      <p>Active Projects</p>
+    </div>
+    <div class="card stat-card">
+      <div class="stat-icon"></div>
+      <div class="stat" id="s2">0</div>
+      <p>Target Users Reached</p>
+    </div>
+    <div class="card stat-card">
+      <div class="stat-icon"></div>
+      <div class="stat" id="s3">0</div>
+      <p>Patents Published</p>
+    </div>
+    <div class="card stat-card">
+      <div class="stat-icon"></div>
+      <div class="stat" id="s4">0</div>
+      <p>Other Projects</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════ SKILLS ════ -->
+<section id="skills" class="section">
+  <h2>Skills</h2>
+  <p class="section-sub">Capabilities Powering the Vision</p>
+  <div class="skills-grid">
+    <span class="skill-pill">🤖 AI Systems &amp; Intelligent Solutions</span>
+    <span class="skill-pill">🚑 Emergency Technology</span>
+    <span class="skill-pill">🏥 Healthcare Systems</span>
+    <span class="skill-pill">🏗️ System Design &amp; Architecture</span>
+    <span class="skill-pill">🔌 Embedded Systems (ESP32)</span>
+    <span class="skill-pill">🌐 IoT Development</span>
+    <span class="skill-pill">📱 Mobile Application Development</span>
+    <span class="skill-pill">💡 Problem Solving &amp; Innovation</span>
+    <span class="skill-pill">🔬 Research &amp; Product Development</span>
+    <span class="skill-pill">🚀 Startup Development &amp; Leadership</span>
+    <span class="skill-pill">📊 Real-Time Data Systems</span>
+    <span class="skill-pill">🛡️ Safety &amp; Surveillance Tech</span>
+  </div>
+</section>
+
+<!-- ════ IMPACT ════ -->
+<section id="impact" class="section">
+  <h2>Impact</h2>
+  <p class="section-sub">Creating Meaningful Change Through Technology</p>
+  <p style="color:#777;font-size:15px;max-width:620px;margin:0 auto 10px;line-height:1.9;">VYNOR is built on a mission to create real impact — not just technology. Every solution we build is aimed at saving time, improving decisions, and ultimately saving lives.</p>
+  <div class="impact-grid">
+    <div class="impact-item">
+      <div class="impact-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="32" cy="34" r="22"/><polyline points="32,20 32,34 41,43"/>
+          <line x1="22" y1="8" x2="42" y2="8"/><line x1="32" y1="8" x2="32" y2="12"/>
+        </svg>
+      </div>
+      <p>Reducing emergency response time through AI-powered dispatch and routing</p>
+    </div>
+    <div class="impact-item">
+      <div class="impact-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="6" y="20" width="36" height="24" rx="3"/><path d="M42 28h8l6 8v8h-14V28z"/>
+          <circle cx="16" cy="48" r="5"/><circle cx="48" cy="48" r="5"/>
+          <line x1="18" y1="30" x2="18" y2="38"/><line x1="14" y1="34" x2="22" y2="34"/>
+        </svg>
+      </div>
+      <p>Improving ambulance accessibility in urban and Tier-2/Tier-3 regions</p>
+    </div>
+    <div class="impact-item">
+      <div class="impact-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="6" y="18" width="30" height="20" rx="3"/><polygon points="36,22 56,14 56,42 36,34"/>
+          <line x1="21" y1="38" x2="21" y2="52"/><line x1="10" y1="52" x2="34" y2="52"/>
+          <circle cx="14" cy="28" r="3"/>
+        </svg>
+      </div>
+      <p>Enhancing safety through real-time monitoring and intelligent surveillance</p>
+    </div>
+    <div class="impact-item">
+      <div class="impact-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="8" y="16" width="48" height="42" rx="3"/><path d="M22 58V44h20v14"/>
+          <line x1="32" y1="24" x2="32" y2="36"/><line x1="26" y1="30" x2="38" y2="30"/>
+          <line x1="8" y1="28" x2="56" y2="28"/><polyline points="18,16 18,8 46,8 46,16"/>
+        </svg>
+      </div>
+      <p>Enabling smarter healthcare coordination between users, hospitals, and providers</p>
+    </div>
+    <div class="impact-item">
+      <div class="impact-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="32" cy="32" r="8"/><circle cx="10" cy="14" r="5"/><circle cx="54" cy="14" r="5"/>
+          <circle cx="10" cy="50" r="5"/><circle cx="54" cy="50" r="5"/>
+          <line x1="15" y1="17" x2="26" y2="26"/><line x1="49" y1="17" x2="38" y2="26"/>
+          <line x1="15" y1="47" x2="26" y2="38"/><line x1="49" y1="47" x2="38" y2="38"/>
+        </svg>
+      </div>
+      <p>Bridging critical gaps in emergency and healthcare infrastructure</p>
+    </div>
+    <div class="impact-item">
+      <div class="impact-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M24 10c-8 0-14 6-14 14 0 4 2 8 5 10v4h22v-4c3-2 5-6 5-10 0-8-6-14-14-14h-4z"/>
+          <line x1="24" y1="38" x2="24" y2="54"/><line x1="40" y1="38" x2="40" y2="54"/>
+          <line x1="18" y1="54" x2="46" y2="54"/><line x1="32" y1="10" x2="32" y2="6"/>
+          <line x1="10" y1="24" x2="6" y2="24"/><line x1="54" y1="24" x2="58" y2="24"/>
+          <line x1="24" y1="22" x2="40" y2="22"/><line x1="28" y1="28" x2="36" y2="28"/>
+        </svg>
+      </div>
+      <p>Building intelligent systems that support human life when it matters most</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════ VISION ════ -->
+<div class="vision-para">
+  <h2>Our Vision</h2>
+  <p>To build a world where intelligent systems seamlessly support human life — making healthcare faster, safety stronger, and technology more responsive. VYNOR aims to become a trusted ecosystem of AI-powered solutions that transform how critical services operate in real time.</p>
+</div>
+
+<!-- ════ ACHIEVEMENTS ════ -->
+<section id="achievements" class="section">
+  <h2>Achievements</h2>
+  <p class="section-sub">Milestones That Define Our Journey</p>
+  <div class="ach-grid">
+    <div class="ach-card">
+      <div class="ach-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="10" y="6" width="36" height="46" rx="3"/>
+          <line x1="18" y1="18" x2="38" y2="18"/><line x1="18" y1="26" x2="38" y2="26"/>
+          <line x1="18" y1="34" x2="30" y2="34"/>
+          <circle cx="46" cy="48" r="10" fill="white" stroke="#111" stroke-width="3"/>
+          <polyline points="41,48 45,52 52,44"/>
+        </svg>
+      </div>
+      <h4>Patent Published</h4>
+      <p>Healthcare Support Application patent published under Application No. 202541074004 — a unified digital healthcare platform.</p>
+    </div>
+    <div class="ach-card">
+      <div class="ach-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="8" y="20" width="30" height="38" rx="2"/><rect x="38" y="32" width="18" height="26" rx="2"/>
+          <line x1="8" y1="20" x2="38" y2="20"/>
+          <rect x="14" y="28" width="7" height="7" rx="1"/><rect x="25" y="28" width="7" height="7" rx="1"/>
+          <rect x="14" y="40" width="7" height="7" rx="1"/><rect x="25" y="40" width="7" height="7" rx="1"/>
+          <rect x="20" y="50" width="8" height="8"/><rect x="43" y="40" width="7" height="7" rx="1"/>
+          <line x1="4" y1="58" x2="60" y2="58"/><line x1="23" y1="14" x2="23" y2="20"/>
+          <polyline points="14,14 23,6 32,14"/>
+        </svg>
+      </div>
+      <h4>Founded VYNOR Private Limited</h4>
+      <p>Established and leading VYNOR as Founder &amp; Director — a technology startup driving AI innovation in healthcare and safety.</p>
+    </div>
+    <div class="ach-card">
+      <div class="ach-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="22" width="36" height="24" rx="3"/><path d="M40 30h8l8 8v8H40V30z"/>
+          <circle cx="14" cy="50" r="5"/><circle cx="46" cy="50" r="5"/>
+          <line x1="16" y1="31" x2="16" y2="39"/><line x1="12" y1="35" x2="20" y2="35"/>
+        </svg>
+      </div>
+      <h4>Developed AUSWAY</h4>
+      <p>Built an AI-powered healthcare emergency platform addressing ambulance accessibility and emergency coordination gaps.</p>
+    </div>
+    <div class="ach-card">
+      <div class="ach-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="18" width="32" height="22" rx="4"/><polygon points="36,22 58,14 58,44 36,40"/>
+          <circle cx="14" cy="29" r="4"/><line x1="20" y1="40" x2="20" y2="54"/>
+          <line x1="8" y1="54" x2="34" y2="54"/><line x1="28" y1="10" x2="36" y2="18"/>
+          <circle cx="25" cy="8" r="4"/>
+        </svg>
+      </div>
+      <h4>Built AUSCAM</h4>
+      <p>Designed and developed an intelligent multi-camera ambulance surveillance system with edge processing capabilities.</p>
+    </div>
+    <div class="ach-card">
+      <div class="ach-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 54 A32 32 0 0 1 54 10"/><path d="M18 54 A24 24 0 0 1 54 18"/>
+          <path d="M26 54 A16 16 0 0 1 54 26"/>
+          <circle cx="54" cy="10" r="4" fill="#111"/>
+          <line x1="10" y1="54" x2="32" y2="32"/>
+          <circle cx="32" cy="32" r="5" fill="white"/>
+          <line x1="32" y1="37" x2="32" y2="58"/><line x1="22" y1="58" x2="42" y2="58"/>
+        </svg>
+      </div>
+      <h4>A.V. Monitoring System</h4>
+      <p>Created a real-time safety monitoring and intelligent tracking system for dynamic operational environments.</p>
+    </div>
+    <div class="ach-card">
+      <div class="ach-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="48" height="48" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 46c0-6-8-10-8-20a18 18 0 0 1 36 0c0 10-8 14-8 20z"/>
+          <line x1="22" y1="50" x2="42" y2="50"/><line x1="24" y1="54" x2="40" y2="54"/>
+          <line x1="32" y1="6" x2="32" y2="2"/><line x1="54" y1="26" x2="58" y2="26"/>
+          <line x1="6" y1="26" x2="10" y2="26"/><line x1="48" y1="12" x2="51" y2="9"/>
+          <line x1="13" y1="41" x2="16" y2="38"/>
+          <line x1="32" y1="26" x2="32" y2="36"/><circle cx="32" cy="24" r="4"/>
+        </svg>
+      </div>
+      <h4>Active AI Innovation</h4>
+      <p>Recognized for building practical, real-world problem-solving solutions across AI-driven healthcare and safety domains.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════ CONTACT ════ -->
+<section id="contact" class="section">
+  <h2>Contact</h2>
+  <p class="section-sub">Let's Connect and Build the Future Together</p>
+  <div class="grid contact-grid" style="max-width:720px;margin:0 auto;">
+    <div class="card contact-card">
+      <div class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="40" height="40" fill="none" stroke="#111" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 8h-6a4 4 0 0 0-4 4v4c0 22 18 40 40 40h4a4 4 0 0 0 4-4v-6a2 2 0 0 0-1.2-1.8l-10-4a2 2 0 0 0-2.2.4l-4 4C34 40 24 30 19.4 23l4-4a2 2 0 0 0 .4-2.2l-4-10A2 2 0 0 0 18 8z"/>
+        </svg>
+      </div>
+      <h3>Phone</h3>
+      <p><a href="tel:+917305601588" class="contact-link">+91 7305601588</a></p>
+    </div>
+    <div class="card contact-card">
+      <div class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="40" height="40" fill="none" stroke="#111" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="6" y="14" width="52" height="38" rx="4"/><polyline points="6,14 32,38 58,14"/>
+        </svg>
+      </div>
+      <h3>Gmail</h3>
+      <p><a href="mailto:chendilnadan040@gmail.com" class="contact-link">chendilnadan040@gmail.com</a></p>
+    </div>
+    <div class="card contact-card">
+      <div class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="40" height="40" fill="none" stroke="#111" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M32 6C21 6 12 15 12 26c0 16 20 32 20 32s20-16 20-32C52 15 43 6 32 6z"/>
+          <circle cx="32" cy="26" r="7"/>
+        </svg>
+      </div>
+      <h3>Location</h3>
+      <p>Chennai, Tamil Nadu, India</p>
+    </div>
+    <div class="card contact-card">
+      <div class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="40" height="40" fill="none" stroke="#111" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="6" y="6" width="52" height="52" rx="10"/>
+          <line x1="20" y1="28" x2="20" y2="48"/><circle cx="20" cy="19" r="4"/>
+          <path d="M28 48V35c0-7 16-7 16 0v13"/>
+          <line x1="28" y1="28" x2="28" y2="48"/>
+        </svg>
+      </div>
+      <h3>LinkedIn</h3>
+      <p><a href="https://www.linkedin.com/in/chendilnadan-p-n-5459b0223?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" class="contact-link">LinkedIn</a></p>
+    </div>
+    <div class="card contact-card">
+      <div class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="40" height="40" fill="none" stroke="#111" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="8" y="22" width="28" height="36" rx="2"/><rect x="36" y="34" width="20" height="24" rx="2"/>
+          <rect x="14" y="30" width="6" height="6" rx="1"/><rect x="24" y="30" width="6" height="6" rx="1"/>
+          <rect x="14" y="40" width="6" height="6" rx="1"/><rect x="24" y="40" width="6" height="6" rx="1"/>
+          <rect x="19" y="50" width="8" height="8"/><rect x="41" y="42" width="6" height="6" rx="1"/>
+          <polyline points="14,22 22,12 36,22"/>
+        </svg>
+      </div>
+      <h3>Company</h3>
+      <p><a href="../index.html" target="_blank" class="contact-link">VYNOR PRIVATE LIMITED</a></p>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 P. N. Chendilnadan · Founder &amp; Director, VYNOR PRIVATE LIMITED · Chennai, Tamil Nadu</footer>
+
+<script>
+function scrollToSection(id) {
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+}
+function toggleNav() {
+  const nav  = document.getElementById('navLinks');
+  const btn  = document.getElementById('hamburger');
+  const open = nav.classList.toggle('open');
+  btn.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+}
+function closeNav() {
+  document.getElementById('navLinks').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', (e) => {
+  cursor.style.top  = e.clientY + 'px';
+  cursor.style.left = e.clientX + 'px';
+});
+
+const revealEls = document.querySelectorAll('.section, .intro-section');
+window.addEventListener('scroll', () => {
+  revealEls.forEach(el => {
+    if (el.getBoundingClientRect().top < window.innerHeight - 80) el.classList.add('visible');
+  });
+});
+window.dispatchEvent(new Event('scroll'));
+
+function openModal(src) { document.getElementById('modal').style.display = 'flex'; document.getElementById('modalImg').src = src; }
+function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+/* ══ Quantum Flow Field ══ */
+(function () {
+  const canvas = document.getElementById('bgCanvas');
+  const ctx    = canvas.getContext('2d');
+  let W, H, cellW, cellH, time = 0;
+  const COLS = 55, ROWS = 32;
+
+  /* ─── resize ──────────────────────────────────────── */
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    cellW = W / COLS; cellH = H / ROWS;
+    ctx.fillStyle = '#020407';
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  /* ─── multi-octave trig-based flow field ─────────── */
+  function fieldAngle(nx, ny, t) {
+    return (
+      Math.sin(nx * 2.6 + t * 0.44) * Math.cos(ny * 1.9 - t * 0.30) * 1.35 +
+      Math.sin(nx * 5.1 - ny * 3.4 + t * 0.29) * 0.48 +
+      Math.cos(nx * 1.3 + ny * 2.2 - t * 0.17) * 0.42 +
+      Math.sin((nx + ny) * 3.2 + t * 0.53) * 0.28
+    ) * Math.PI;
+  }
+
+  /* ─── aurora background blobs ────────────────────── */
+  const BLOBS = [
+    { bx:0.12, by:0.22, r:0.55, h:195, a:0.11, ts:0.00012, tp:0.0 },
+    { bx:0.82, by:0.68, r:0.62, h:222, a:0.09, ts:0.00009, tp:1.3 },
+    { bx:0.48, by:0.08, r:0.42, h:268, a:0.08, ts:0.00015, tp:2.5 },
+    { bx:0.18, by:0.82, r:0.48, h:182, a:0.09, ts:0.00010, tp:0.8 },
+    { bx:0.88, by:0.22, r:0.44, h:243, a:0.07, ts:0.00013, tp:3.6 },
+    { bx:0.55, by:0.55, r:0.38, h:210, a:0.06, ts:0.00011, tp:5.1 },
+  ];
+
+  function drawBlobs(t) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    BLOBS.forEach(b => {
+      const pulse = 1 + Math.sin(t * b.ts * 13000 + b.tp) * 0.14;
+      const cx = (b.bx + Math.sin(t * b.ts * 9000 + b.tp) * 0.07) * W;
+      const cy = (b.by + Math.cos(t * b.ts * 8000 + b.tp) * 0.06) * H;
+      const rad = Math.min(W, H) * b.r * pulse;
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
+      g.addColorStop(0,   `hsla(${b.h},80%,12%,${b.a})`);
+      g.addColorStop(0.45,`hsla(${b.h},75%,8%,${b.a * 0.55})`);
+      g.addColorStop(1,   `hsla(${b.h},70%,4%,0)`);
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, rad, rad * 0.7, t * b.ts * 3000, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
+  }
+
+  /* ─── main particle field ────────────────────────── */
+  const N   = 2400;
+  const px  = new Float32Array(N), py  = new Float32Array(N);
+  const pxp = new Float32Array(N), pyp = new Float32Array(N);
+  const pv  = new Float32Array(N), pl  = new Float32Array(N);
+  const pml = new Float32Array(N), psz = new Float32Array(N);
+  const pco = new Float32Array(N); // 0→silver, 0.5→iceblue, 1→cyan
+
+  function spawnParticle(i, rand) {
+    px[i] = Math.random() * W;
+    py[i] = rand ? Math.random() * H : (Math.random() < 0.5 ? -2 : H + 2);
+    pxp[i] = px[i]; pyp[i] = py[i];
+    pv[i]  = 0.65 + Math.random() * 1.55;
+    pl[i]  = rand ? Math.random() * 320 : 0;
+    pml[i] = 160 + Math.random() * 300;
+    psz[i] = 0.28 + Math.random() * 1.05;
+    pco[i] = Math.random();
+  }
+  for (let i = 0; i < N; i++) spawnParticle(i, true);
+
+  function drawParticles(t) {
+    for (let i = 0; i < N; i++) {
+      pl[i]++;
+      if (pl[i] > pml[i] || px[i] < -4 || px[i] > W + 4 || py[i] < -4 || py[i] > H + 4) {
+        spawnParticle(i, false); continue;
+      }
+      const col = Math.min(COLS - 1, Math.max(0, px[i] / cellW | 0));
+      const row = Math.min(ROWS - 1, Math.max(0, py[i] / cellH | 0));
+      const ang = fieldAngle(col / COLS, row / ROWS, t);
+      pxp[i] = px[i]; pyp[i] = py[i];
+      px[i] += Math.cos(ang) * pv[i];
+      py[i] += Math.sin(ang) * pv[i];
+
+      const lr = pl[i] / pml[i];
+      const alpha = Math.sin(lr * Math.PI) * 0.52;
+      const c = pco[i];
+      let r, g, b;
+      if (c < 0.55) {
+        const v = 165 + (c / 0.55) * 90 | 0;
+        r = v; g = v + 10; b = v + 28;
+      } else if (c < 0.82) {
+        r = 70 + ((c - 0.55) / 0.27 * 100) | 0;
+        g = 155 + ((c - 0.55) / 0.27 * 60) | 0;
+        b = 235;
+      } else {
+        r = 30; g = 210; b = 220;
+      }
+      ctx.strokeStyle = `rgba(${r},${g},${b},${alpha.toFixed(3)})`;
+      ctx.lineWidth = psz[i];
+      ctx.beginPath();
+      ctx.moveTo(pxp[i], pyp[i]);
+      ctx.lineTo(px[i], py[i]);
+      ctx.stroke();
+    }
+  }
+
+  /* ─── bright energy streams ──────────────────────── */
+  const SN  = 70;
+  const sx  = new Float32Array(SN), sy  = new Float32Array(SN);
+  const sxp = new Float32Array(SN), syp = new Float32Array(SN);
+  const sl  = new Float32Array(SN), sml = new Float32Array(SN);
+  const sh  = new Float32Array(SN), sbr = new Float32Array(SN);
+
+  function spawnStream(i) {
+    sx[i] = Math.random() * W; sy[i] = Math.random() * H;
+    sxp[i] = sx[i]; syp[i] = sy[i];
+    sl[i] = Math.random() * 100; sml[i] = 70 + Math.random() * 130;
+    sh[i] = 185 + Math.random() * 85;
+    sbr[i] = 0.55 + Math.random() * 0.45;
+  }
+  for (let i = 0; i < SN; i++) spawnStream(i);
+
+  function drawStreams(t) {
+    for (let i = 0; i < SN; i++) {
+      sl[i]++;
+      if (sl[i] > sml[i] || sx[i] < 0 || sx[i] > W || sy[i] < 0 || sy[i] > H) {
+        spawnStream(i); continue;
+      }
+      const col = Math.min(COLS - 1, Math.max(0, sx[i] / cellW | 0));
+      const row = Math.min(ROWS - 1, Math.max(0, sy[i] / cellH | 0));
+      const ang = fieldAngle(col / COLS, row / ROWS, t);
+      sxp[i] = sx[i]; syp[i] = sy[i];
+      sx[i] += Math.cos(ang) * 2.8; sy[i] += Math.sin(ang) * 2.8;
+      const lr  = sl[i] / sml[i];
+      const alp = Math.sin(lr * Math.PI) * sbr[i] * 0.55;
+      ctx.strokeStyle = `hsla(${sh[i]},90%,72%,${alp.toFixed(3)})`;
+      ctx.lineWidth = 1.0;
+      ctx.beginPath(); ctx.moveTo(sxp[i], syp[i]); ctx.lineTo(sx[i], sy[i]); ctx.stroke();
+    }
+  }
+
+  /* ─── subtle grid overlay ────────────────────────── */
+  function drawGrid(t) {
+    ctx.save();
+    ctx.globalAlpha = 0.022 + 0.008 * Math.sin(t * 0.3);
+    ctx.strokeStyle = '#4488cc';
+    ctx.lineWidth = 0.5;
+    const gStep = Math.min(W, H) / 18;
+    for (let x = 0; x < W; x += gStep) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y < H; y += gStep) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+    ctx.restore();
+  }
+
+  /* ─── vignette ───────────────────────────────────── */
+  function drawVignette() {
+    const g = ctx.createRadialGradient(W/2, H/2, H*0.25, W/2, H/2, H*0.85);
+    g.addColorStop(0, 'rgba(2,4,7,0)');
+    g.addColorStop(1, 'rgba(2,4,7,0.55)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  /* ─── main loop ──────────────────────────────────── */
+  function loop() {
+    ctx.fillStyle = 'rgba(2,4,7,0.11)';
+    ctx.fillRect(0, 0, W, H);
+    time += 0.0028;
+
+    drawBlobs(time);
+    drawGrid(time);
+    drawStreams(time);
+    drawParticles(time);
+    drawVignette();
+
+    requestAnimationFrame(loop);
+  }
+
+  resize();
+  loop();
+  window.addEventListener('resize', resize);
+})();
+
+/* ── Stats counter ── */
+let sa=0,sb=0,sc=0,sd=0;
+const t1=setInterval(()=>{
+  if(sa<5)document.getElementById('s1').innerText=++sa;
+  if(sb<500)document.getElementById('s2').innerText=sb+=10;
+  if(sc<3)document.getElementById('s3').innerText=++sc;
+  if(sd<10)document.getElementById('s4').innerText=++sd;
+  if(sa>=5&&sb>=500&&sc>=3&&sd>=10)clearInterval(t1);
+},80);
+</script>
+</body>
+</html>
